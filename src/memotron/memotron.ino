@@ -1,3 +1,11 @@
+/*
+  Photomaton V0.86
+*/
+
+
+
+
+
 //-----------------------------------------------------------------------------
 // Initialize Things
 //-----------------------------------------------------------------------------
@@ -7,13 +15,10 @@
 //***** Printer
 #include "SoftwareSerial.h"                 // Serial comms library
 #include "Adafruit_Thermal.h"               // Printer library
-#define TX_PIN 6 // Arduino transmit  YELLOW WIRE  labeled RX on printer
-#define RX_PIN 5 // Arduino receive   GREEN WIRE   labeled TX on printer
-SoftwareSerial mySerial(RX_PIN, TX_PIN);    // Declare SoftwareSerial obj first
+#define TX_PIN 6                            // Transmit  YELLOW WIRE
+#define RX_PIN 5                            // Receive   GREEN WIRE
+SoftwareSerial mySerial(RX_PIN, TX_PIN);    // Declare SoftwareSerial
 Adafruit_Thermal printer(&mySerial);        // Pass addr to printer constructor
-
-
-
 
 
 //*****************************************************************************
@@ -37,10 +42,14 @@ int               pinStatus = 0;            // Read pin status
 const int         printWidth = 384;         //Width of images
 const int         printHeight = 500;        //Height of images
 
+
+
+
+
 //-----------------------------------------------------------------------------
 // SETUP
-//-----------------------------------------------------------------------------
 void setup() {
+  //---------------------------------------------------------------------------
 
 
   //***************************************************************************
@@ -84,8 +93,8 @@ void setup() {
 
 //-----------------------------------------------------------------------------
 // LOOP
-//-----------------------------------------------------------------------------
 void loop() {
+  //---------------------------------------------------------------------------
 
 
   //***************************************************************************
@@ -137,7 +146,7 @@ int fPrintFile () {
   int randomNumber = random (16) + 1;
   String fileExt = ".bin";
   String sdFiName = randomNumber + fileExt;
-  
+
   const char * c = sdFiName.c_str();
 
 
