@@ -33,6 +33,7 @@ const int sdPin = 8;                        // SD card reader pin
 unsigned long     systemBoot;               // Seconds since system boot
 unsigned long     lastPrint;                // Seconds since last print
 const int         printInterval = 20;       // Minimum seconds between prints
+const int         SDcardFileCount = 520;    // No of files on SD card
 boolean           readyForPrint;            // If true, buttonpress will print
 
 const int         buttonPin = 2;            // Connected button
@@ -143,7 +144,7 @@ int fCheckButton () {
 //***** Print a file
 int fPrintFile () {
 
-  int randomNumber = random (16) + 1;
+  int randomNumber = random (SDcardFileCount);
   String fileExt = ".bin";
   String sdFiName = randomNumber + fileExt;
 
