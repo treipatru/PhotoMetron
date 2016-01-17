@@ -32,8 +32,8 @@ const int sdPin = 8;                        // SD card reader pin
 //***** Set Variables
 unsigned long     systemBoot;               // Seconds since system boot
 unsigned long     lastPrint;                // Seconds since last print
-const int         printInterval = 20;       // Minimum seconds between prints
-const int         SDcardFileCount = 520;    // No of files on SD card
+const int         printInterval = 5;       // Minimum seconds between prints
+const int         SDcardFileCount = 4;    // No of files on SD card
 boolean           readyForPrint;            // If true, buttonpress will print
 
 const int         buttonPin = 2;            // Connected button
@@ -82,7 +82,7 @@ void setup() {
     fResetPrinter();
     return;
   }
-  printer.feed(2);
+  printer.feed(1);
 
   randomSeed(analogRead(0));                // Unused analog as seed
 
@@ -143,22 +143,33 @@ int fCheckButton () {
 //***************************************************************************
 //***** Print a file
 int fPrintFile () {
-
+  //Compose random filename
   int randomNumber = random (1, SDcardFileCount + 1);
   String fileExt = ".bin";
   String sdFiName = randomNumber + fileExt;
 
+  //Transform it to something usable for the printer
   const char * c = sdFiName.c_str();
 
+  //Print image header
+  for (int i = 0; i < 32; i++) {
+    printer.write(0xB0);
+  }
+  printer.feed(1);
 
+  //Print actual image
   File sdCardFile = SD.open (c, FILE_READ);
 
   while (sdCardFile.available()) {
     printer.printBitmap(printWidth, printHeight, dynamic_cast<Stream*>(&sdCardFile));
   }
   sdCardFile.close();
-
   delay(1000);                                  // 1 sec delay
+
+  //Print image footer
+  for (int i = 0; i < 32; i++) {
+    printer.write(0xB0);
+  }
 
   printer.feed(2);                              // Breathing room
   lastPrint = millis() / 1000;                  // Reset print timer
