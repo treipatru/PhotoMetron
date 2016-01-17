@@ -12,7 +12,7 @@ void setup() {
   int byteIndex = 0;
 
   // Select and load image
-  filename   = ("c:\\thermalbmp\\03.bmp");
+  filename   = ("c:\\thermal\\01.bmp");
   println("Loading image...");
   img        = loadImage(filename);
 
