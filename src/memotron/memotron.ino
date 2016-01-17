@@ -1,5 +1,5 @@
 /*
-  Photomaton V0.86
+  Photomaton V0.90
 */
 
 
@@ -32,8 +32,8 @@ const int sdPin = 8;                        // SD card reader pin
 //***** Set Variables
 unsigned long     systemBoot;               // Seconds since system boot
 unsigned long     lastPrint;                // Seconds since last print
-const int         printInterval = 5;       // Minimum seconds between prints
-const int         SDcardFileCount = 4;    // No of files on SD card
+const int         printInterval = 10;       // Minimum seconds between prints
+const int         SDcardFileCount = 520;    // No of files on SD card
 boolean           readyForPrint;            // If true, buttonpress will print
 
 const int         buttonPin = 2;            // Connected button
@@ -152,10 +152,8 @@ int fPrintFile () {
   const char * c = sdFiName.c_str();
 
   //Print image header
-  for (int i = 0; i < 32; i++) {
-    printer.write(0xB0);
-  }
-  printer.feed(1);
+  fPrintSeparator ();
+  printer.println();
 
   //Print actual image
   File sdCardFile = SD.open (c, FILE_READ);
@@ -164,14 +162,17 @@ int fPrintFile () {
     printer.printBitmap(printWidth, printHeight, dynamic_cast<Stream*>(&sdCardFile));
   }
   sdCardFile.close();
+
   delay(1000);                                  // 1 sec delay
 
   //Print image footer
-  for (int i = 0; i < 32; i++) {
-    printer.write(0xB0);
-  }
+  fPrintSeparator ();
+  printer.justify('C');
+  printer.println(sdFiName);
+  fPrintSeparator ();
 
-  printer.feed(2);                              // Breathing room
+  //Finish printing task
+  printer.feed(4);                              // Breathing room
   lastPrint = millis() / 1000;                  // Reset print timer
   fResetPrinter();                              // Reset printer
 }
@@ -184,4 +185,12 @@ int fResetPrinter () {
   delay(3000L);                                 // Wait 3 seconds
   printer.wake();                               // wake() before new print
   printer.setDefault();                         // Restore defaults
+}
+
+//***************************************************************************
+//***** Print separator
+int fPrintSeparator () {
+  for (int i = 0; i < 32; i++) {
+    printer.write(0xB0);
+  }
 }
