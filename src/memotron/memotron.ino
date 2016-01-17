@@ -144,7 +144,7 @@ int fCheckButton () {
 //***** Print a file
 int fPrintFile () {
 
-  int randomNumber = random (SDcardFileCount);
+  int randomNumber = random (1, SDcardFileCount + 1);
   String fileExt = ".bin";
   String sdFiName = randomNumber + fileExt;
 
