@@ -1,5 +1,5 @@
 /*
-  Photomaton V0.90
+  Photomaton V0.95
 */
 
 
@@ -30,9 +30,10 @@ const int sdPin = 8;                        // SD card reader pin
 
 //*****************************************************************************
 //***** Set Variables
-unsigned long     systemBoot;               // Seconds since system boot
-unsigned long     lastPrint;                // Seconds since last print
-const int         printInterval = 10;       // Minimum seconds between prints
+unsigned long     systemBoot;               // S since system boot
+unsigned long     lastPrint;                // S since last print
+int               printBias;                // S for random print times
+const int         printInterval = 3000;     // Minimum seconds between prints
 const int         SDcardFileCount = 520;    // No of files on SD card
 boolean           readyForPrint;            // If true, buttonpress will print
 
@@ -85,7 +86,7 @@ void setup() {
   printer.feed(1);
 
   randomSeed(analogRead(0));                // Unused analog as seed
-
+  printBias = 0;
 }
 
 
@@ -103,7 +104,7 @@ void loop() {
   systemBoot = millis() / 1000;
 
 
-  if ((systemBoot - lastPrint) < printInterval) { // Seconds until print allowed
+  if ((systemBoot - lastPrint) < (printInterval + printBias)) {
     readyForPrint = false;
     digitalWrite(ledPin, LOW);
   } else {
@@ -168,12 +169,13 @@ int fPrintFile () {
   //Print image footer
   fPrintSeparator ();
   printer.justify('C');
-  printer.println(sdFiName);
+  printer.println("- " + String(randomNumber, DEC) + " -");
   fPrintSeparator ();
 
   //Finish printing task
   printer.feed(4);                              // Breathing room
   lastPrint = millis() / 1000;                  // Reset print timer
+  printBias = random (1,1200);                    // Set print bias
   fResetPrinter();                              // Reset printer
 }
 
