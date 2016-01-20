@@ -1,5 +1,9 @@
 /*
-  Photomaton V0.95
+  PhotoMetron V1.0 - A button-operated memories machine!
+  
+  Developed on Arduino Uno by andrei@planet34.org with help from the
+  open-source community.
+
 */
 
 
@@ -32,8 +36,7 @@ const int sdPin = 8;                        // SD card reader pin
 //***** Set Variables
 unsigned long     systemBoot;               // S since system boot
 unsigned long     lastPrint;                // S since last print
-int               printBias;                // S for random print times
-const int         printInterval = 3000;     // Minimum seconds between prints
+unsigned long     printInterval = 60000;    // Minimum ms between prints
 const int         SDcardFileCount = 520;    // No of files on SD card
 boolean           readyForPrint;            // If true, buttonpress will print
 
@@ -86,7 +89,6 @@ void setup() {
   printer.feed(1);
 
   randomSeed(analogRead(0));                // Unused analog as seed
-  printBias = 0;
 }
 
 
@@ -101,10 +103,10 @@ void loop() {
 
   //***************************************************************************
   //***** Timer Managament
-  systemBoot = millis() / 1000;
+  systemBoot = millis();
 
 
-  if ((systemBoot - lastPrint) < (printInterval + printBias)) {
+  if ((systemBoot - lastPrint) < printInterval) {
     readyForPrint = false;
     digitalWrite(ledPin, LOW);
   } else {
@@ -174,8 +176,8 @@ int fPrintFile () {
 
   //Finish printing task
   printer.feed(4);                              // Breathing room
-  lastPrint = millis() / 1000;                  // Reset print timer
-  printBias = random (1,1200);                    // Set print bias
+  lastPrint = millis();                         // Reset print timer
+  printInterval = random(50400000, 86400000);   // Reset interval 14-24H
   fResetPrinter();                              // Reset printer
 }
 
